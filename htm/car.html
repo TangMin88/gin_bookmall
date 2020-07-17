@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
+    <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            //给清空购物车的链接绑定单击事件
+            $(".deletes").click(function() {
+                var carid = $(this).attr("id")
+                if (confirm("请问确定要清空购物车吗？")) {
+                    return $.ajax({
+                        url:"/car?carid="+carid,  
+                        type:`DELETE`,
+                        success:function(res) {
+                            if (res=="成功"){
+                                window.location.href = "/car";
+                            }
+                        },
+                    });
+                } ;
+
+            });
+           
+            //给输入购物项的数量绑定change事件                     
+            $(".updatecount").change(function() {
+                //获取购物项id
+                var cartitmid = $(this).attr("id");
+                //输入的数量
+                var bookcount = $(this).val();                 
+                //发送请求
+                return $.ajax({
+                   url:"/car?cartitmid="+cartitmid+"&count="+bookcount,  
+                   type:`PUT`,    
+                   success:function(res) {
+                        if (res=="成功"){
+                            window.location.href = "/car";
+                        }
+                   },
+                });                                      
+            });   
+
+            //给删除购物项的链接绑定单击事件
+            $(".deletecartitm").click(function(){
+                var title = $(this).attr("id");
+                //获取购物项id
+                var cartitmid = $(".updatecount").attr("id");
+                if (confirm("请问确定要删除【"+title+"】这本书吗？")) {
+                    return $.ajax({
+                        url:"/car?cartitmid="+cartitmid,  
+                        type:`DELETE`,
+                        success:function(res) {
+                            if (res=="成功"){
+                                window.location.href = "/car";
+                            }
+                        },
+                    });
+                }
+            }); 
+
+              
+        });
+    </script>
+</head>
+
+<body text="purple" bgcolor ="silver" >
+   
+    <div id="header">
+        
+        <div>
+            <a href="/user/logout">登出</a>
+            <a href="/page">返回</a>
+        </div>
+    </div>
+
+    <div id="main" style="font-size: xx-large;">
+        {{if .judge}}
+        <caption>购物车</caption>
+        {{range $i, $v := .car.CartItms}}
+        <table width="600">  
+             
+            <tr>
+                <td width="150">商品名称</td>
+                <td width="100">数量</td>
+                <td width="100">单价</td>
+                <td width="100">金额</td>
+                <td width="100">操作</td>
+                <hr size="2px" width="100%" color="green" align="center"/>
+            </tr>
+            <span>{{$i}}</span>  
+            {{range $v}}           
+            <tr>
+                <td width="150">{{.Book.Title}}</td>
+                <td width="100">
+                    <input id="{{.ID}}" type="text" class="updatecount" value="{{.Count}}" style="text-align: center;width: 50px;"/>               
+                </td>
+                <td width="100">{{.Book.Price}}</td>
+                <td width="100">{{.Amount}}</td>
+                <td>
+                    <input type="button" value="删除" id="{{.Book.Title}}" class="deletecartitm" style="width: 79px; height: 38px;" />
+                </td>
+                <hr size="2px" width="100%" color="green" align="center"/>
+            </tr>          
+            {{end}}
+        </table>
+        {{end}}
+
+        <div class="car_info">
+            <span class="car_span">购物车共有<span class="b_count">{{.car.Totalcount}}</span>件</span>
+            <span class="car_span">总金额<span class="b_amount">{{.car.Totalamount}}</span>元</span>
+            <span class="car_span"><input type="button" value="清空购物车" id="{{.car.ID}}" class="deletes" style="width: 79px; height: 38px;" /></span>
+            <span class="car_span"><a href="/car/order">去结账</a></span>          
+        </div>
+    
+        {{else}}
+        <h1 style="text-align: center;">你的购物车空空如也，快去<a href="/page" style="color: royalblue;">购物</a>吧</h1> 
+        {{end}}
+       
+    </div>
+</body>
+</html>

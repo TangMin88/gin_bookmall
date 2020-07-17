@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>确认订单</title>
+        <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
+        <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+        <script type="text/javascript">
+        $(function(){
+            //确认付款
+            $(".confirm").click(function() {
+                return $.ajax({
+                    url:"/car/order?state=1",  
+                    type:`POST`,
+                    success:function(res) {
+                        if (res=="成功"){
+                            window.location.href = "/orders";
+                        }
+                    },
+                });                 
+            });
+            //取消
+            $(".cancel").click(function() {
+                if(confirm("请问确定取消付款吗？")) {
+                    return $.ajax({
+                        url:"/car/order?state=4",  
+                        type:`POST`,
+                        success:function(res) {
+                            if (res=="成功"){
+                                window.location.href = "/orders";
+                            }
+                        },
+                    });
+                };
+            });
+        });
+        </script>
+    </head>
+    <body text="purple" bgcolor ="silver">
+        <div>
+            <div id="header">
+                <div>                                     
+                    <a href ="/car" >返回</a>
+                </div>                                                        
+            </div> 
+            <div class="main">
+                <span>
+                    <h1 align="center">确认订单</h1> 
+                    <hr size="3px" width="50%" color="green" align="center"/>
+                </span>  
+                <div class="user">
+                   <div> <span>{{.user.ReceiverName}}</span> <span>{{.user.ReceiverMobile}}</span> </div>
+                   <div><span>{{.user.ReceiverAddress}}</span></div> 
+                </div>
+                <hr size="3px" width="10%" color="green" align="left"/>
+                {{range $i, $v := .car.CartItms}}              
+                <div class="shangp">
+                    <div><span>{{$i}}</span></div>
+                    {{range $v}}
+                    <div>
+                        <div><img class="book_img" alt="" src="/{{.Book.Imgpath}}" height="200" width="200"/></div>
+                        <div>书名:<span>{{.Book.Title}}</span></div>                   
+                        <div>单价:<span>{{.Book.Price}}</span></div>
+                        <div>数量:<span>{{.Count}}</span></div>
+                        <div>小计:<span>{{.Amount}}</span></div>
+                        
+                    </div>
+                    {{end}}                    
+                </div>
+                {{end}}
+                <hr size="3px" width="10%" color="green" align="left"/>
+                <div >
+                    <span class="car_span">共有<span class="b_count">{{.car.Totalcount}}</span>件,</span>
+                    <span class="car_span">合计<span class="b_amount">{{.car.Totalamount}}</span>元</span>       
+                </div>
+                <hr size="3px" width="10%" color="green" align="left"/>
+                <div>
+                    <span><input type="button" value="确认付款"  class="confirm" style="width: 79px; height: 38px;" /></span> 
+                    <span><input type="button" value="取消"  class="cancel" style="width: 79px; height: 38px;" /></span>
+                </div>
+            </div>
+            
+        </div>  
+        
+    </body>
+</html>

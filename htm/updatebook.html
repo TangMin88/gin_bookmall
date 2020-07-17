@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改/添加</title>
+    <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
+    <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+    <script type="text/javascript">  
+    $(function(){
+            
+    });
+    </script>
+</head>
+<body>
+    <div id="header">
+        <a href="/shop">返回</a> 
+    </div>
+    <div class="container">
+        <div class="wrap">   
+            <article>
+                <section>
+                    <aside>
+                        {{if .j}}
+                         <form action="/shop/book?bookid={{.book.ID}}" method="POST" enctype="multipart/form-data">
+                            <div>
+                                <input type="file" name="f" value="" ><img class="book_img" alt="" src="/static/书籍图片/{{.book.Imgpath}}" height="200" width="200"/>
+                                <input type="text" name="f1" class="f1" value= "{{.book.Imgpath}}">
+                            </div>
+                            <div>
+                                <input type="text" name="title" class="title" value= "{{.book.Title}}" placeholder="请输入书名">
+                                <input type="text" name="author" class="author" value="{{.book.Author}}" placeholder="请输入作者">
+                                <input type="text" name="price" class="price" value= "{{.book.Price}}" placeholder="请输入价格">
+                                <input type="text" name="stock" class="stock" value= "{{.book.Stock}}" placeholder="请输入库存">
+                                
+                            </div>                    
+                            <div>
+                                <input type="submit" value="提交" />
+                            </div>
+                        {{else}}
+                            <form action="/shop/book" method="POST" enctype="multipart/form-data">
+                                <div>
+                                    <input type="file" name="f" value="">
+                                </div>
+                                <div>
+                                    <input type="text" name="title" class="title" value= "" placeholder="请输入书名">
+                                    <input type="text" name="author" class="author" value="" placeholder="请输入作者">
+                                    <input type="text" name="price" class="price" value= "" placeholder="请输入价格">
+                                    <input type="text" name="stock" class="stock" value= "" placeholder="请输入库存">
+                                    
+                                </div>                    
+                                <div>
+                                    <input type="submit" value="提交" />
+                                </div>
+                        {{end}}
+                        </form>
+                    </aside>
+                   
+                </section>               
+            </article>           
+        </div>
+    </div>
+</body>
+</html>

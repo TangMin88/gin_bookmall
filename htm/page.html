@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
+    <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            //影藏
+            $("#shou").hide();
+            //给购物车的按钮绑定单击事件
+            $(".bookbut").click(function(){
+                //获取bookid
+               var bookId = $(this).attr("id");            
+                //设置请求的urt
+                var url ="/car";
+                //设置请求参数
+                var param = {"bookid":bookId};
+                //发送Ajax请求
+                $.post(url,param,function(res){  
+                    $("#shou").show();
+                    if (res=="请先登录") {//根据返回值进行跳转
+                        window.location.href = "/user/login";
+                    }else{
+                        $("#bookmsg").text(res)   
+                    }
+                                                                
+                });
+            });
+        });    
+    </script>      
+</head>
+
+<body text="purple"  bgcolor ="silver" >     
+    <div id="header">
+        <span>
+            <h1 align="center">首页</h1> 
+            <hr size="3px" width="100%" color="green" align="center"/>
+        </span>
+        {{if.judge}}
+        <div>
+            <span class="um_span">{{.session.UserName}}</span>
+            <a href ="/user/logout" >登出</a>
+            <a href="/car">购物车</a> 
+            <a href="/orders">我的订单</a>
+            <a href="/">消息</a>
+            {{if gt .session.ShopID 0}}
+            <a href="/shop">{{.session.ShopName}}</a>
+            {{else}}
+            <a href="/owner">成为店主</a>
+            {{end}}
+            
+        </div>
+        {{else}}
+        <div>
+            <a href ="/user/login" >登录</a><a href ="/user/regist" >注册</a>
+        </div>
+        {{end}}
+        
+    </div>
+
+    <div id="main">
+        <div id="book">
+        <div class="book_cond">
+            <form action="/page?state=1" method="POST">
+                价格：<input type="text" name="pricemin" >元 - <input type="text" name="pricemax" >元 
+                <input type="submit" value="查询" >
+            </form>
+        </div>
+
+        <div style="text-align: center;">
+            <div>
+                <span id="shou">你刚刚将<span style="color: royalblue;" id="bookmsg"></span>加入到购物车中</span>
+            </div>
+        </div>
+        
+        <div id="b_list" style="font-size: x-large;" >
+            {{range .page.BooK}}
+            <div class="img_div">
+                <img class="book_img" alt="" src="/static/书籍图片/{{.Imgpath}}" height="200" width="200"/>
+            </div>
+            <div class="book">
+                <div class="book_name">
+                    <span class="sp1">书名：</span>
+                    <span class="sp2">{{.Title}}</span>
+                </div>
+                <div class="book_author">
+                    <span class="sp1">作者：</span>
+                    <span class="sp2">{{.Author}}</span>
+                </div>
+                <div class="book_price">
+                    <span class="sp1">价格：</span>
+                    <span class="sp2">{{.Price}}</span>
+                </div>
+                <div class="book_sales">
+                    <span class="sp1">销量：</span>
+                    <span class="sp2">{{.Sales}}</span>
+                </div>
+                <div class="book_stock">
+                    <span class="sp1">库存：</span>
+                    <span class="sp2">{{.Stock}}</span>
+                </div>                
+                <div class="book_shopname">
+                    <span class="sp1">店名：</span>
+                    <span class="sp2">{{.ShopName}}</span>
+                </div>
+                <div class="book_add">
+                    {{if .Stock}}
+                    <input id="{{.ID}}" type="button" value="购物车" class="bookbut"/>
+                    {{else}}
+                    <span>补货中</span>
+                    {{end}}
+                </div>
+            </div>     
+            {{end}}  
+        </div>
+         
+        </div>
+        <div id="page_nav">
+            {{if eq .page.State 1}}
+            {{if .page.IsHasPrev}}
+            <a href="/page?pricemin={{.page.Pricemin}}&pricemax={{.page.Pricemax}}&state=1">首页</a>
+            <a href="/page?pageNo={{.page.PreviousPage}}&pricemin={{.page.Pricemin}}&pricemax={{.page.Pricemax}}&state=1">上一页</a>
+            {{end}}
+            当前是第{{.page.PageNo}}页.共{{.page.TotalPage}}页.共{{.page.TotalRecord}}条记录
+            {{if .page.IsHasNext}}
+            <a href="/page?pageNo={{.page.NextPage}}&pricemin={{.page.Pricemin}}&pricemax={{.page.Pricemax}}&state=1">下一页</a>
+            <a href="/page?pageNo={{.page.TotalPage}}&pricemin={{.page.Pricemin}}&pricemax={{.page.Pricemax}}&state=1">末页</a>
+            {{end}}
+            到第<input value="{{.page.PageNo}}" name="pn" id="pn_input"/>页
+            <input type="button" value="确定" id="sub"/>
+            <script>
+                $("#sub").click(function(){
+                    var PageNo = $("#pn_input").val();
+                    location = "/page?pageNo="+PageNo+"&pricemin={{.page.Pricemin}}&pricemax={{.page.Pricemax}}"
+                });
+            </script>
+            {{else}}
+            {{if .page.IsHasPrev}}
+            <a href="/page">首页</a>
+            <a href="/page?pageNo={{.page.PreviousPage}}">上一页</a>
+            {{end}}
+            当前是第{{.page.PageNo}}页.共{{.page.TotalPage}}页.共{{.page.TotalRecord}}条记录
+            {{if .page.IsHasNext}}
+            <a href="/page?pageNo={{.page.NextPage}}">下一页</a>
+            <a href="/page?pageNo={{.page.TotalPage}}">末页</a>
+            {{end}}
+            到第<input value="{{.page.PageNo}}" name="pn" id="pn_input"/>页
+            <input type="button" value="确定" id="sub"/>
+            <script>
+                $("#sub").click(function(){
+                    var PageNo = $("#pn_input").val();
+                    location = "/page?pageNo="+PageNo
+                });
+            </script>
+            {{end}}
+        </div>   
+    
+    </div>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册页面</title>
+    <link rel="stylesheet" type="text/css" href="/static/regist/css/regist.css">
+    <script type="text/javascript" src="/static/regist/js/jquery.min.js"></script>
+    <script type="text/javascript"> 
+        //添加监听input值的改变事件
+        $('#username').bind('input propertychange',function() {
+            var tvalmum;
+            //统计input输入字段的长度
+            tvalmum=$(this).val().length;
+            //如果大于8个字直接进行字符串截取
+            if (tvalmum>8){
+                var tval =$(this).val();
+                tval= tval.substring(0,8);
+                $(this).val(tval);
+                alert('长度超出限制！');
+            }
+        })
+        //对比两次输入的密码是否一致  
+        function check2pwd() {
+            if(password1.value != password2.value) {
+                alert("两次输入的密码不一致")
+                password.value = ""
+                password2.value = ""
+            }
+        }
+        //确定手机号的长度
+        $('#number').bind('input propertychange',function() {
+            var tvalmum;
+            //统计input输入字段的长度
+            tvalmum=$(this).val().length;
+            //如果大于8个字直接进行字符串截取
+            if (tvalmum>11){
+                var tval =$(this).val();
+                tval= tval.substring(0,11);
+                $(this).val(tval);
+                alert('长度超出限制！');
+            }
+        })
+        
+        $(function(){
+            //将显示错误信息的span标签隐藏
+            $("#msg").hide();
+            //发送AJsx请求验证用户名是否可用
+            //给输入的用户名的文本框绑定change事件
+            $("#username").change(function(){
+                //获取用户输入的用户名
+                var userName=$(this).val();
+                //设置请求地址
+                var url ="/user/username";
+                //设置请求参数
+                var param = {"username":userName};
+                //发送Ajax请求
+                $.post(url,param,function(res){
+                    //将显示提示信息的span元素显示
+                    $("#msg").show();
+                    //将响应信息设置到span元素中
+                    $("#msg").html(res);
+                });
+            });
+        });
+        var nun ;
+        var InterValObj; //timer变量，控制时间 
+        var count = 30; //间隔函数，1秒执行 
+        var curCount;//当前剩余秒数 
+        function fashong() {
+            curCount = count; 
+            //设置button效果，开始计时 
+            $("#but").attr("disabled", "true"); 
+            $("#but").val(curCount + "秒后可重新发送"); 
+            InterValObj = window.setInterval(SetRemainTime, 1000); //启动计时器，1秒执行一次
+            //获取手机号
+            var num = $('#number').val();
+            //设置请求地址
+            var url ="/user/acquirenumber";
+            //设置请求参数
+            var param = {"number":num};
+            //发送Ajax请求
+            $.post(url,param,function(rese){
+              nun = rese
+            });
+        }
+        //timer处理函数 
+        function SetRemainTime() { 
+            if (curCount == 0) {         
+                window.clearInterval(InterValObj);//停止计时器 
+                $("#but").removeAttr("disabled");//启用按钮 
+                $("#but").val("重新发送验证码"); 
+            } 
+            else { 
+                curCount--; 
+                $("#but").val(curCount + "秒后可重新发送"); 
+            } 
+        } 
+
+        //验证码是否正确
+        function check2num(v) {
+            if(v != nun ){
+                alert("验证码错误")
+                v = ""           
+            }
+        }
+
+        function checkall(){
+            var u = document.getElementById('username')
+            var p = document.getElementById('password2')
+            var nu = document.getElementById('number')
+            var n = document.getElementById('num')
+            var e = document.getElementById('email')
+            var a = document.getElementById('address')
+            if(a.value==""){    
+            alert('地址输入为空！');
+            a.focus();
+            return false;
+            }
+
+            if(u.value==""){    
+            alert('用户名输入为空！');
+            u.focus();
+            return false;
+            }
+
+            if(p.value==""){    
+            alert('密码输入为空！');
+            p.focus();
+            return false;
+            }
+
+            if(nu.value==""){    
+            alert('手机号输入为空！');
+            nu.focus();
+            return false;
+            }
+
+            if(n.value==""){    
+            alert('验证码输入为空！');
+            n.focus();
+            return false;
+            }
+
+            if(e.value==""){    
+            alert('邮箱输入为空！');
+            n.focus();
+            return false;
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <div id="header" >
+        <a href="/page">返回</a>
+    </div>
+    <div class="wrapper">
+        <article>      
+            <div class="main">
+                <span class="errorMsg" id="msg">{{.}}</span>
+                <form action="/user/regist" method="POST" name="form" onsubmit="return checkall()"enctype="application/x-www-form-urlencoded" >                    
+                    <div class="tel"> 
+                        <input type="tel" name="email" placeholder="邮箱" id="email"/><em></em>
+                    </div>
+                    <div class="userName">
+                        <input type="text" name="username" placeholder="用户名" id="username" value="" onfocus="javascript:this.value=''" maxlength="8" /><em>长度小于8个字符组成！</em>
+                    </div>
+                    <div class="password">
+                        <input type="password" name="password" placeholder="密码" id="password"/>
+                    </div>
+                    <div class="againpwd">
+                        <input type="password" name="password" placeholder="再次输入密码"id="password2"   onblur="check2pwd()"/><em></em>
+                    </div>
+                    <div class="address">
+                        <input type="text" name="address" placeholder="地址"id="address"/><em></em>
+                    </div>
+                    <div class="number">
+                        <input type="text" name="number" placeholder="手机号码"id="number" maxlength="11" /><em></em>                      
+                    </div>
+                    <div>
+                        <input type="text" value="" id="num" style="width: 100px; height: 38px;" onblur="check2num(this.value)"/>
+                        <input type="button" value="获取验证码" id="but" style="width: 79px; height: 38px;" onclick="fashong()"/><em></em>                       
+                    </div>
+                    <input type="submit" value="注册" />
+                </form>
+            </div>
+        </article>
+        
+    </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>我的货单</title>
+        <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
+        <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+        <script type="text/javascript">
+        $(function(){
+            //发货
+            $(".but2").click(function() {
+                if (confirm("请问这份订单准备好,确定要发货吗？")) {                   
+                    var orderid = $(this).attr("id");        
+                    return $.ajax({
+                        url:"/shop/invoicep?orderid="+orderid,  
+                        type:`PUT`,                          
+                        success:function(res) {
+                            if (res=="成功"){
+                                window.location.href = "/shop/invoicep";
+                            }
+                        },
+                    });  
+                };
+            });
+            // $(".but2").change(function() {
+            //     //获取订单id
+            //     var orderid = $(this).attr("id");
+            //     //交易完成状态码
+            //     var state = 1;                 
+            //     //发送请求
+            //     location = "/thedelivery?orderid="+orderid+"&state="+state;                                        
+            // });
+                  
+        });    
+        </script>
+    </head>
+    <body text="purple" bgcolor ="silver">
+        <div>
+            <div id="header">
+                <div><a href="/shop">返回</a></div>
+                <span>
+                    <h1 align="center">我的货单</h1> 
+                    <hr size="3px" width="50%" color="green" align="center"/>
+                </span>  
+            </div>
+            <div>
+                <a href="/shop/invoicep">全部货单</a>
+                <a href="/shop/invoicep?state=4">未付款</a>
+                <a href="/shop/invoicep?state=1">未发货</a>
+                <a href="/shop/invoicep?state=2">未收货</a>
+                <a href="/shop/invoicep?state=3">交易完成</a>                             
+            </div>          
+            <div>
+                {{if.judge}}
+                {{range .orders}}
+                <div><span>订单号:</span> <span>{{.ID}}</span></div>
+                <div><span>时间:</span> <span>{{.CreateTime}}</span>/div>
+               
+                <table width="1000">   
+                    <tr>                      
+                        <td width="30">书名</td>
+                        <td width="30">单价</td>
+                        <td width="30">数量</td>
+                        <td width="30">小计</td>
+                                           
+                    </tr>
+                                          
+                    {{range .OrderItem}}
+                    <tr>                          
+                        <td width="30">{{.Title}}</td>
+                        <td width="30">{{.Price}}</td>
+                        <td width="30">{{.Count}}</td>
+                        <td width="30">{{.Amount}}</td>
+                       
+                    </tr> 
+                    {{end}}  
+                    <tr>
+                        <td width="30">总数量：{{.TotalCount}}</td>
+                        <td width="100">合计：{{.TotalAmount}}</td>
+                        <td width="30"></td>
+                        <td width="30"></td>
+                    </tr>  
+                    <tr>          
+                        <td width="100"><a class="but1" href="/checkthedetails?orderid={{.ID}}&s=shop">查看详情</a></td>
+                        {{if .NoSend}}
+                        <td width="100"><input type="button"id={{.ID}} value="发货" class="but2" style="width: 79px; height: 38px;" /></td>                      
+                        {{end}}
+                        {{if .SendComplate}}
+                        <td width="100">等待收货</td>                       
+                        {{end}}
+                        {{if .NotPaying}}                
+                        <td width="100"><a class="cancel" href="">提醒付款</a></td>
+                        {{end}}
+                        {{if .TheDeal}}
+                        <td width="100">交易完成</td>
+                        {{end}} 
+                                                                                        
+                    </tr>                                    
+                   
+                </table>
+                <hr size="2px" width="100%" color="green" align="center"/>         
+                {{end}}            
+                {{else}}
+                <h1>没有订单</h1>
+                {{end}}
+            </div>
+        </div>
+    </body>
+</html>

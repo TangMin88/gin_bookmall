@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆页面</title>
+    <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
+    <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $(".name input").focus(function(){
+                $(this).prev("i").css({"background-image":"url(/static/login/img/user2.png)"});
+            });
+            $(".name input").blur(function(){
+                $(this).prev("i").css({"background-image":"url(/static/login/img/user1.png)"});
+            });
+            $(".password input").focus(function(){
+                $(this).prev("i").css({"background-image":"url(/static/login/img/password2.png)"});
+            });
+            $(".password input").blur(function(){
+                $(this).prev("i").css({"background-image":"url(/static/login/img/password1.png)"});
+            });
+        });
+       
+        $(function(){
+            $("#msg").hide();
+            if("{{.}}" != "") {
+                $("#msg").show();
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="wrap">
+           
+            <article>
+                <section>
+                    <aside>
+                        <em>
+                            <img src="/static/login/img/user.png"/>
+                        </em>
+                        <span class="errorMsg" id="msg">{{.}}</span>
+                         <form action="/user/login" method="POST" enctype="application/x-www-form-urlencoded">
+                            <p class="name"><i></i><input type="text" name="username" class="username" placeholder="请输入用户名"></p>
+                            <p class="password"><i></i><input type="password" name="password" class="pwd" placeholder="请输入密码"></p>
+                            <input type="submit" value="登录" />
+                            <p class="remember"><input type="checkbox" name="remember">记住密码</p>
+                            <p class="passwordBack"><a href="./sms.html">密码找回</a></p>
+                            <p class="regist"><a href="/user/regist">立即注册</a></p>
+                            
+                        </form>
+                    </aside>
+                   
+                </section>               
+            </article>           
+        </div>
+    </div>
+</body>
+</html>

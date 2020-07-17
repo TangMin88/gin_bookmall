@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>查看详情</title>
+        <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
+        <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+        <script type="text/javascript">
+       
+        </script>
+    </head>
+    <body text="purple" bgcolor ="silver">
+        <div>
+            <div id="header">
+                <div>  
+                   {{if.Judge}}                                   
+                    <a href ="/myinvoicep" >返回</a>
+                    {{else}}
+                    <a href ="/queryorder" >返回</a>
+                    {{end}}
+                </div>                                                        
+            </div> 
+            <div class="main">
+                <span>
+                    <h1 align="center">查看详情</h1> 
+                    <hr size="3px" width="50%" color="green" align="center"/>
+                </span>  
+                <div class="user">
+                   <div> <span>{{.User.Username}}</span> <span>{{.User.Number}}</span> </div>
+                   <div><span>{{.User.Address}}</span></div> 
+                </div>
+                <hr size="3px" width="10%" color="green" align="left"/>
+               
+                <div class="shangp">                 
+                    {{range.OrderItem}}
+                    <div>
+                        <div><img class="book_img" alt="" src="../{{.ImgPath}}" height="200" width="200"/></div>
+                        <div>书名：<span>{{.Title}}</span></div>
+                        <div>作者：<span>{{.Author}}</span></div>
+                        <div>单价：<span>{{.Price}}</span></div>
+                        <div>数量：<span>{{.Count}}</span></div>
+                        <div>小计：<span>{{.Amount}}</span></div>
+                        
+                    </div>
+                    {{end}}               
+                </div>               
+                <hr size="3px" width="10%" color="green" align="left"/>
+            </div>
+            
+        </div>  
+        
+    </body>
+</html>

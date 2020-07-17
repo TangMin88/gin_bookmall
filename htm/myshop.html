@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Shop.ShopName}}</title>
+    <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
+    <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            //给删除书籍的链接绑定单击事件
+            $(".but1").click(function(){
+                var bookid = $(this).attr("id");
+                var title =$(".but2").attr("id")
+                    if (confirm("请问确定要删除【"+title+"】这本书吗？")){
+                    return $.ajax({
+                        url:"/shop/book?bookid="+bookid,  
+                        type:`DELETE`,
+                        success:function(res) {
+                            if (res=="成功"){
+                                window.location.href = "/shop";
+                            }else{
+                                alert(res)
+                            }
+                            
+                        },
+                    }); 
+                    };
+            }); 
+            //修改
+            // $(".but2").click(function(){
+            //     var bookid = $(".but1").attr("id");                 
+            //     return $.ajax({
+            //         url:"/shop/book?bookid="+bookid,  
+            //         type:`GET`,
+            //     });                
+            // });
+        });    
+    </script>      
+</head>
+
+<body text="purple"  bgcolor ="silver" >     
+    <div id="header">
+        <span>
+            <h1 align="center">{{.shopname}}</h1> 
+            <hr size="3px" width="100%" color="green" align="center"/>
+        </span>
+        
+        <div>
+            <a href="/page">首页</a> 
+            <a href ="/user/logout">登出</a>         
+            <a href="/shop/invoicep">我的货单</a>
+            <a href="/shop/book">添加</a>
+            <a href="/">消息</a>
+        </div>
+    </div>
+
+    <div id="main" >   
+        {{if .judge}} 
+
+            
+            <div id="b_list" style="font-size: x-large;" >
+                {{range .page.BooK}}
+                <div class="img_div">
+                    <img class="book_img" alt="" src="/static/书籍图片/{{.Imgpath}}" height="200" width="200"/>
+                </div>
+                <div class="book">
+                    <div class="book_name">
+                        <span class="sp1">书名：</span>
+                        <span class="sp2">{{.Title}}</span>
+                    </div>
+                    <div class="book_author">
+                        <span class="sp1">作者：</span>
+                        <span class="sp2">{{.Author}}</span>
+                    </div>
+                    <div class="book_price">
+                        <span class="sp1">价格：</span>
+                        <span class="sp2">{{.Price}}</span>
+                    </div>
+                    <div class="book_sales">
+                        <span class="sp1">销量：</span>
+                        <span class="sp2">{{.Sales}}</span>
+                    </div>
+                    <div class="book_stock">
+                        <span class="sp1">库存：</span>
+                        <span class="sp2">{{.Stock}}</span>
+                    </div>  
+                    <div>
+                        <input id="{{.ID}}" type="button" value="删除" class="but1"/>
+                       <a id="{{.Title}}" class="but2" href="/shop/book?bookid={{.ID}}">修改</a>                                  
+                    </div>
+                </div> 
+                {{end}} 
+            </div>
+             
+        {{else}}   
+        你还没有一本书籍，快去<a href="/">添加</a>吧!
+        {{end}}   
+     
+        <div id="page_nav">
+            {{if .page.IsHasPrev}}
+            <a href="/shop">首页</a>
+            <a href="/shop?pageNo={{.page.PreviousPage}}">上一页</a>
+            {{end}}
+            当前是第{{.page.PageNo}}页.共{{.page.TotalPage}}页.共{{.page.TotalRecord}}条记录
+            {{if .page.IsHasNext}}
+            <a href="/shop?pageNo={{.page.NextPage}}">下一页</a>
+            <a href="/shop?pageNo={{.page.TotalPage}}">末页</a>
+            {{end}}
+            到第<input value="{{.page.PageNo}}" name="pn" id="pn_input"/>页
+            <input type="button" value="确定" id="sub"/>
+            <script>
+                $("#sub").click(function(){
+                    var PageNo = $("#pn_input").val();
+                    location = "/shop?pageNo="+PageNo
+                });
+            </script>
+        </div>    
+    </div>
+</body>
+</html>
