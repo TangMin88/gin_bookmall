@@ -6,9 +6,9 @@
 需要下载git
 go get -u github.com/TangMin88/gin_bookmall
 ##环境依赖
-github.com/aliyun/alibaba-cloud-sdk-go 
-github.com/gin-gonic/gin 
-github.com/go-sql-driver/mysql // indirect
-github.com/jinzhu/gorm
+* github.com/aliyun/alibaba-cloud-sdk-go 
+* github.com/gin-gonic/gin 
+* github.com/go-sql-driver/mysql // indirect
+* github.com/jinzhu/gorm
 ##版本控制
 该项目使用go module(Go语言默认的依赖管理工具)进行版本管理,您可以在go mod文件参看当前可用版本.
