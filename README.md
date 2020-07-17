@@ -3,7 +3,6 @@
 ## 功能
 登录，注册，短信验证，加入购物车，查看购物车，清空购物车，删除购物项，查看订单，订单详情，更新订单状态，我的店铺，成为店主，书籍增删改查，价格区间查询书籍等
 ## 安装
-需要下载git
 go get -u github.com/TangMin88/gin_bookmall
 ## 环境依赖
 * github.com/aliyun/alibaba-cloud-sdk-go 
