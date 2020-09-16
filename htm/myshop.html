@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>{{.Shop.ShopName}}</title>
-    <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
-    <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
     <script type="text/javascript">
         $(function(){
             //给删除书籍的链接绑定单击事件
             $(".but1").click(function(){
                 var bookid = $(this).attr("id");
-                var title =$(".but2").attr("id")
+                var title = $(this).attr("name")
                     if (confirm("请问确定要删除【"+title+"】这本书吗？")){
                     return $.ajax({
                         url:"/shop/book?bookid="+bookid,  
@@ -78,15 +78,15 @@
                     </div>
                     <div class="book_sales">
                         <span class="sp1">销量：</span>
-                        <span class="sp2">{{.Sales}}</span>
+                        <span class="sp2">{{.Inventory.Sales}}</span>
                     </div>
                     <div class="book_stock">
                         <span class="sp1">库存：</span>
-                        <span class="sp2">{{.Stock}}</span>
+                        <span class="sp2">{{.Inventory.Stock}}</span>
                     </div>  
                     <div>
-                        <input id="{{.ID}}" type="button" value="删除" class="but1"/>
-                       <a id="{{.Title}}" class="but2" href="/shop/book?bookid={{.ID}}">修改</a>                                  
+                        <input id="{{.ID}}" type="button" value="删除" class="but1" name="{{.Title}}"/>
+                       <a class="but2" href="/shop/book?bookid={{.ID}}">修改</a>                                  
                     </div>
                 </div> 
                 {{end}} 

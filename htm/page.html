@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>首页</title>
-    <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
-    <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
     <script type="text/javascript">
         $(function(){
             //影藏
@@ -76,6 +76,7 @@
         </div>
         
         <div id="b_list" style="font-size: x-large;" >
+            
             {{range .page.BooK}}
             <div class="img_div">
                 <img class="book_img" alt="" src="/static/书籍图片/{{.Imgpath}}" height="200" width="200"/>
@@ -93,20 +94,16 @@
                     <span class="sp1">价格：</span>
                     <span class="sp2">{{.Price}}</span>
                 </div>
-                <div class="book_sales">
-                    <span class="sp1">销量：</span>
-                    <span class="sp2">{{.Sales}}</span>
-                </div>
                 <div class="book_stock">
                     <span class="sp1">库存：</span>
-                    <span class="sp2">{{.Stock}}</span>
+                    <span class="sp2">{{.Inventory.Stock}}</span>
                 </div>                
                 <div class="book_shopname">
                     <span class="sp1">店名：</span>
                     <span class="sp2">{{.ShopName}}</span>
                 </div>
                 <div class="book_add">
-                    {{if .Stock}}
+                    {{if .Inventory.Stock}}
                     <input id="{{.ID}}" type="button" value="购物车" class="bookbut"/>
                     {{else}}
                     <span>补货中</span>
@@ -114,11 +111,12 @@
                 </div>
             </div>     
             {{end}}  
+        
         </div>
          
         </div>
         <div id="page_nav">
-            {{if eq .page.State 1}}
+            {{if eq .page.State "1"}}
             {{if .page.IsHasPrev}}
             <a href="/page?pricemin={{.page.Pricemin}}&pricemax={{.page.Pricemax}}&state=1">首页</a>
             <a href="/page?pageNo={{.page.PreviousPage}}&pricemin={{.page.Pricemin}}&pricemax={{.page.Pricemax}}&state=1">上一页</a>

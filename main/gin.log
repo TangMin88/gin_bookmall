@@ -1,0 +1,48 @@
+[GIN-debug] GET    /static/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
+[GIN-debug] HEAD   /static/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
+[GIN-debug] Loaded HTML Templates (14): 
+	- 
+	- myshop.html
+	- regist.html
+	- car.html
+	- confirm.html
+	- daozhuan.html
+	- myorder.html
+	- checkThedetails.html
+	- myinvoice.html
+	- page.html
+	- sms.html
+	- login.html
+	- owner.html
+	- updatebook.html
+
+[GIN-debug] GET    /page                     --> gin-bookmall/processor.Page (3 handlers)
+[GIN-debug] POST   /page                     --> gin-bookmall/processor.Page (3 handlers)
+[GIN-debug] GET    /user/login               --> gin-bookmall/processor.Login (3 handlers)
+[GIN-debug] POST   /user/login               --> gin-bookmall/processor.PostLogin (3 handlers)
+[GIN-debug] GET    /user/logout              --> gin-bookmall/processor.Logout (3 handlers)
+[GIN-debug] GET    /user/regist              --> gin-bookmall/processor.Regist (3 handlers)
+[GIN-debug] POST   /user/regist              --> gin-bookmall/processor.PostRegist (3 handlers)
+[GIN-debug] POST   /user/username            --> gin-bookmall/processor.PostName (3 handlers)
+[GIN-debug] POST   /user/acquirenumber       --> gin-bookmall/processor.PostAcquire (3 handlers)
+[GIN-debug] POST   /user/shouj               --> gin-bookmall/processor.PostShouj (3 handlers)
+[GIN-debug] PUT    /user/passwordback        --> gin-bookmall/processor.PutPassWordBack (3 handlers)
+[GIN-debug] POST   /user/contrastnumber      --> gin-bookmall/processor.PostContrast (3 handlers)
+[GIN-debug] GET    /car                      --> gin-bookmall/processor.GetCar (4 handlers)
+[GIN-debug] POST   /car                      --> gin-bookmall/processor.PostCar (4 handlers)
+[GIN-debug] DELETE /car                      --> gin-bookmall/processor.DeleteCar (4 handlers)
+[GIN-debug] PUT    /car                      --> gin-bookmall/processor.PutCar (4 handlers)
+[GIN-debug] GET    /car/order                --> gin-bookmall/processor.GetToCheckOut (4 handlers)
+[GIN-debug] POST   /car/order                --> gin-bookmall/processor.Pay (4 handlers)
+[GIN-debug] GET    /orders                   --> gin-bookmall/processor.GetOrder (4 handlers)
+[GIN-debug] DELETE /orders                   --> gin-bookmall/processor.DeleteOrder (4 handlers)
+[GIN-debug] GET    /owner                    --> gin-bookmall/processor.AsTheOwner (4 handlers)
+[GIN-debug] POST   /owner                    --> gin-bookmall/processor.PostAsTheOwner (4 handlers)
+[GIN-debug] GET    /shop                     --> gin-bookmall/processor.MyBookShop (5 handlers)
+[GIN-debug] DELETE /shop/book                --> gin-bookmall/processor.DleteBook (5 handlers)
+[GIN-debug] GET    /shop/book                --> gin-bookmall/processor.GetBook (5 handlers)
+[GIN-debug] POST   /shop/book                --> gin-bookmall/processor.PostBook (5 handlers)
+[GIN-debug] GET    /shop/invoicep            --> gin-bookmall/processor.GetInvoice (5 handlers)
+[GIN-debug] PUT    /shop/invoicep            --> gin-bookmall/processor.PutTheDelivery (5 handlers)
+[GIN-debug] GET    /return                   --> gin-bookmall/processor.GetOrder (6 handlers)
+[GIN-debug] Listening and serving HTTP on :8888

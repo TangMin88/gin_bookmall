@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>修改/添加</title>
-    <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
-    <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
     <script type="text/javascript">  
     $(function(){
             
@@ -30,7 +30,9 @@
                                 <input type="text" name="title" class="title" value= "{{.book.Title}}" placeholder="请输入书名">
                                 <input type="text" name="author" class="author" value="{{.book.Author}}" placeholder="请输入作者">
                                 <input type="text" name="price" class="price" value= "{{.book.Price}}" placeholder="请输入价格">
-                                <input type="text" name="stock" class="stock" value= "{{.book.Stock}}" placeholder="请输入库存">
+                                <input type="text" name="stock" class="stock" value= "" placeholder="请输入加入库存数量">
+                                <span>现有库存：<span>{{.book.Inventory.Stock}}</span>。</span>
+                               
                                 
                             </div>                    
                             <div>

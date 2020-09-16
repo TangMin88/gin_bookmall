@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>注册页面</title>
-    <link rel="stylesheet" type="text/css" href="/static/regist/css/regist.css">
-    <script type="text/javascript" src="/static/regist/js/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/regist.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
     <script type="text/javascript"> 
         //添加监听input值的改变事件
         $('#username').bind('input propertychange',function() {
@@ -62,11 +62,12 @@
                 });
             });
         });
-        var nun ;
+        
         var InterValObj; //timer变量，控制时间 
         var count = 30; //间隔函数，1秒执行 
         var curCount;//当前剩余秒数 
         function fashong() {
+            $(".number").hide();
             curCount = count; 
             //设置button效果，开始计时 
             $("#but").attr("disabled", "true"); 
@@ -80,7 +81,9 @@
             var param = {"number":num};
             //发送Ajax请求
             $.post(url,param,function(rese){
-              nun = rese
+                $(".number").show();
+                    //将响应信息设置到span元素中
+                $(".number").html(rese);
             });
         }
         //timer处理函数 
@@ -97,13 +100,31 @@
         } 
 
         //验证码是否正确
-        function check2num(v) {
-            if(v != nun ){
-                alert("验证码错误")
-                v = ""           
-            }
-        }
-
+        $(function(){                      
+            $("#num").change(function(){
+                $(".num").hide();
+                //获取用户输入的验证码
+                var num=$(this).val();
+                var number=$("#number").val();
+                if (shouji ==""){
+                    $(".num").show();                    
+                    $(".num").html('手机号空！');
+                    return
+                }
+                //设置请求地址
+                var url ="/user/contrastnumber";
+                //设置请求参数
+                var param = {"num":num,"number":number};
+                //发送Ajax请求
+                $.post(url,param,function(res){                   
+                    $(".num").show();                    
+                    $(".num").html(res);
+                    if (res !="验证码正确") {
+                        num=""
+                    }
+                });
+            });
+        });
         function checkall(){
             var u = document.getElementById('username')
             var p = document.getElementById('password2')
@@ -175,11 +196,11 @@
                         <input type="text" name="address" placeholder="地址"id="address"/><em></em>
                     </div>
                     <div class="number">
-                        <input type="text" name="number" placeholder="手机号码"id="number" maxlength="11" /><em></em>                      
+                        <input type="text" name="number" placeholder="手机号码"id="number" maxlength="11" /><em></em>  <span name="number">{{.}}</span>                    
                     </div>
                     <div>
-                        <input type="text" value="" id="num" style="width: 100px; height: 38px;" onblur="check2num(this.value)"/>
-                        <input type="button" value="获取验证码" id="but" style="width: 79px; height: 38px;" onclick="fashong()"/><em></em>                       
+                        <input type="text" value="" id="num" style="width: 100px; height: 38px;" />
+                        <input type="button" value="获取验证码" id="but" style="width: 79px; height: 38px;" onclick="fashong()"/><em></em>   <span name="num">{{.}}</span>                    
                     </div>
                     <input type="submit" value="注册" />
                 </form>

@@ -7,11 +7,10 @@ import (
 )
 
 func TestCar(t *testing.T) {
-	fmt.Println("car中的函数")
+	//fmt.Println("car中的函数")
 	//t.Run("testAddCar", testAddCar)
 	//t.Run("testGetCarUserID", testGetCarUserID)
 
-	t.Run("testDeleteCar", testDeleteCar)
 }
 
 func testAddCar(t *testing.T) {
@@ -22,7 +21,7 @@ func testAddCar(t *testing.T) {
 		return
 	}
 	cartitm := &Cartitm{
-		Book:   book,
+
 		BookID: book.ID,
 		Count:  2,
 		CarID:  "59595959",
@@ -32,7 +31,9 @@ func testAddCar(t *testing.T) {
 		ID:     "59595959",
 		UserID: 3,
 	}
-	car.GetMap(cartitm)
+	var cartitms []*Cartitm
+	cartitms = append(cartitms, cartitm)
+	car.CartItms = cartitms
 	car.Totalcount = car.GetTotalCount()
 	car.Totalamount = car.GetTotalAmount()
 	err = car.Add()
@@ -55,15 +56,6 @@ func testGetCarUserID(t *testing.T) {
 	}
 	fmt.Println(car)
 	for _, v := range car.CartItms {
-		for _, v1 := range v {
-			fmt.Println(v1)
-			fmt.Println(v1.Book)
-		}
-
+		fmt.Println(v)
 	}
-}
-
-func testDeleteCar(t *testing.T) {
-	car := GetCar()
-	car.Delete("59595959")
 }

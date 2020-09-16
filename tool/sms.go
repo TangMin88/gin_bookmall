@@ -2,6 +2,7 @@ package tool
 
 import (
 	"fmt"
+	"gin-bookmall/modal"
 	"math/rand"
 	"strings"
 	"time"
@@ -22,8 +23,8 @@ func GenValidateCode(width int) string {
 	return sb.String()
 }
 
-//Verification 获取验证码
-func Verification(num string) (string, error) {
+//Verification 发送短信验证码
+func Verification(num string) error {
 	shu := 5
 	code := GenValidateCode(shu) // 生成5位数字验证码功能
 	// 下列的accessKeyId以及accessSecret请按实际申请到的填写
@@ -37,11 +38,15 @@ func Verification(num string) (string, error) {
 	request.TemplateCode = "短信模板ID"
 	request.TemplateParam = "{\"code\":\"" + code + "\"}" //短信模板变量对应的实际值，JSON格式
 
-	response, err := client.SendSms(request)
+	_, err = client.SendSms(request)
 	if err != nil {
-		fmt.Print(err.Error())
+		return err
 	}
-	fmt.Printf("response is %#v\n", response)
+	//fmt.Printf("response is %#v\n", response)
 
-	return code, nil
+	err = modal.Set(num, code)
+	if err != nil {
+		return err
+	}
+	return nil
 }

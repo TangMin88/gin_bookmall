@@ -1,11 +1,11 @@
 package processor
 
 import (
-	"fmt"
 	"gin-bookmall/modal"
 	"gin-bookmall/tool"
 	"net/http"
-	"time"
+
+	//"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,28 +28,25 @@ func PostLogin(c *gin.Context) {
 			user2 := modal.GetUser()
 			err = user2.QueryU(user1.Username)
 			if err == nil && user1.Password == user2.Password {
-				sess := &modal.Session{}
-				err := sess.QueryU(user2.ID)
-				fmt.Println("sess", err)
-				if sess.ID == "" {
-					//创建一个session后与cookie相关联
-					sess.ID = tool.UniqueID()
-					sess.CreateTime = time.Now()
-					sess.UserName = user2.Username
-					sess.UserID = user2.ID
-					//判断是否有店铺
-					shop := modal.GetShop()
-					if err := shop.QueryU(user2.ID); err == nil {
-						sess.ShopName = shop.ShopName
-						sess.ShopID = shop.ID
-					}
-					sess.Add()
+				sess := &modal.Session{
+					ID:       tool.UniqueID(),
+					UserName: user2.Username,
+					UserID:   user2.ID,
 				}
-
+				car := modal.GetCar() //判断是否有对应的购物车
+				if err1 := car.Query(user2.ID); err1 == nil {
+					sess.Car = car
+				}
+				shop := modal.GetShop()
+				if err := shop.QueryU(user2.ID); err == nil {
+					sess.ShopName = shop.ShopName
+					sess.ShopID = shop.ID
+				}
+				sess.Add()
 				//将cookie发送给浏览器,第一个参数为 cookie 名；第二个参数为 cookie 值；第三个参数为 cookie 有效时长，；
 				//第四个参数为 cookie 所在的目录；第五个为所在域，表示我们的 cookie 作用范围；第六个表示是否只能通过 https 访问；
 				//第七个表示 cookie 是否可以通过 js代码进行操作
-				c.SetCookie("bookmall", sess.ID, 1000, "/", "127.0.0.1", false, true)
+				c.SetCookie("bookmall", sess.ID, 900, "/", "127.0.0.1", false, true)
 				c.HTML(http.StatusOK, "daozhuan.html", user2.Username)
 			} else {
 				c.HTML(http.StatusOK, "login.html", "密码错误")
@@ -104,12 +101,29 @@ func PostName(c *gin.Context) {
 func PostAcquire(c *gin.Context) {
 	number := c.PostForm("number")
 	//fmt.Println(number)
-	code, err := tool.Verification(number)
+	err := tool.Verification(number)
 	if err == nil {
 		//fmt.Println(code)
-		c.JSON(http.StatusOK, code)
+		c.JSON(http.StatusOK, "已发送")
 	} else {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, "发送失败")
+	}
+
+}
+
+//对比验证码
+func PostContrast(c *gin.Context) {
+	number := c.PostForm("number")
+	num := c.PostForm("num")
+	num2, err := modal.Get(number)
+	if err == nil {
+		if num2 == num {
+			c.JSON(http.StatusOK, "验证码正确")
+		} else {
+			c.JSON(http.StatusOK, "验证码错误")
+		}
+	} else {
+		c.JSON(http.StatusOK, "请重新发送验证码")
 	}
 
 }

@@ -4,14 +4,14 @@ import "gin-bookmall/dao"
 
 //OrderItem 订单中的订单项
 type Orderitem struct {
-	ID      int64   //订单项的id
-	Count   int64   //订单项中图书的数量
-	Amount  float64 //订单项中图书的金额小计
-	Title   string  //订单项中图书的书名
-	Price   float64 //订单项中图书的价格
-	Imgpath string  //订单项中图书的封面
-	OrderID string  //订单项所属的订单
-	BookID  int64
+	ID      uint16  `json:"Orderitemid,string"` //订单项的id
+	Count   uint    `json:"count,string"`       //订单项中图书的数量
+	Amount  float64 `json:"amount,string"`      //订单项中图书的金额小计
+	Title   string  `json:"title"`              //订单项中图书的书名
+	Price   float64 `json:"price,string"`       //订单项中图书的价格
+	Imgpath string  `json:"imgpath"`            //订单项中图书的封面
+	OrderID string  `json:"orderid"`            //订单项所属的订单
+	BookID  uint16  `json:"bookid,string"`
 }
 
 type OrderitemS []*Orderitem

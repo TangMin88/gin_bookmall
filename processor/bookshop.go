@@ -41,7 +41,7 @@ func MyBookShop(c *gin.Context) {
 		sess, _ := c.Get("sess")
 		session := sess.(*modal.Session)
 		//获取当前页图书
-		err := page.QueryTotalS(session.ShopID)
+		err := page.QueryTotalS(strconv.FormatUint(uint64(session.ShopID), 10))
 		judge := false
 		if err == nil {
 			judge = true
@@ -50,7 +50,6 @@ func MyBookShop(c *gin.Context) {
 			"page":     page,
 			"judge":    judge,
 			"shopname": session.ShopName,
-			//"error":  err.Error(),
 		})
 	} else {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -65,10 +64,9 @@ func GetInvoice(c *gin.Context) {
 	var orders []*modal.Order
 	var judge bool
 	if state == "" {
-		orders, _ = modal.OrderQuerySs(session.ShopID)
+		orders, _ = modal.OrderQuerys(session.ShopID, "shop")
 	} else { //查询不同状态的订单
-		istate, _ := strconv.Atoi(state)
-		orders, _ = modal.OrderQueryS(session.ShopID, istate)
+		orders, _ = modal.OrderQueryS(session.ShopID, state)
 	}
 	if len(orders) > 0 {
 		judge = true
@@ -88,10 +86,12 @@ func PutTheDelivery(c *gin.Context) {
 	if orderid != "" {
 		//查询订单id是否属于登录的店铺
 		order := modal.GetOrder()
-		err := order.Query(orderid)
-		if err == nil && order.ShopID == session.ShopID {
+		order.ShopID = session.ShopID
+		order.ID = orderid
+		err := order.Querys()
+		if err == nil {
 			order.ConsignTime = time.Now()
-			order.State = 2
+			order.State = "2"
 			//更新订单状态
 			order.Update()
 		}
@@ -130,9 +130,9 @@ func PutTheDelivery(c *gin.Context) {
 //DleteShopBook 删除书籍
 func DleteBook(c *gin.Context) {
 	id := c.Query("bookid")
-	iid, _ := strconv.ParseInt(id, 10, 64)
+	iid, _ := strconv.ParseUint(id, 0, 64)
 	//查询要删除的书籍是否属于登录的书店
-	book := modal.GetBook(iid)
+	book := modal.GetBook(uint16(iid))
 	err := book.Query()
 	sess, _ := c.Get("sess")
 	session := sess.(*modal.Session)
@@ -150,12 +150,17 @@ func GetBook(c *gin.Context) {
 	bookid := c.Query("bookid")
 	if bookid != "" {
 		//修改
-		ibookid, _ := strconv.ParseInt(bookid, 10, 64)
-		book := modal.GetBook(ibookid)
+		ibookid, _ := strconv.ParseUint(bookid, 0, 64)
+		book := modal.GetBook(uint16(ibookid))
 		err := book.Query()
 		sess, _ := c.Get("sess")
 		session := sess.(*modal.Session)
 		if err == nil && book.ShopID == session.ShopID {
+			i := &modal.Inventorie{
+				ID: book.ID,
+			}
+			i.Query()
+			book.Inventory = i
 			j = true
 			c.HTML(http.StatusOK, "updatebook.html", gin.H{
 				"j":    j,
@@ -194,16 +199,19 @@ func PostBook(c *gin.Context) {
 	book := &modal.Book{}
 	if err := c.ShouldBind(book); err == nil {
 		book.Imgpath = filename
+		sess, _ := c.Get("sess")
+		session := sess.(*modal.Session)
+		book.ShopID = session.ShopID
+		book.ShopName = session.ShopName
 		if bookid == "" { //添加
-			sess, _ := c.Get("sess")
-			session := sess.(*modal.Session)
-			book.ShopID = session.ShopID
-			book.ShopName = session.ShopName
-			book.Sales = 0
 			book.Add()
 		} else { //修改
-			ibookid, _ := strconv.ParseInt(bookid, 10, 64)
-			book.ID = ibookid
+			ibookid, _ := strconv.ParseUint(bookid, 0, 64)
+			book.ID = uint16(ibookid)
+			book.Inventory.ID = book.ID
+			s, _ := book.Inventory.UpdateSt(float64(book.Inventory.Stock))
+			book.Inventory.Stock = uint16(s)
+			book.Inventory.Update()
 			book.Update()
 		}
 		MyBookShop(c)

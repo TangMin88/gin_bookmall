@@ -3,21 +3,19 @@
     <head>
         <meta charset="UTF-8">
         <title>我的订单</title>
-        <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
-        <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+        <script type="text/javascript" src="/static/js/jquery.min.js"></script>
         <script type="text/javascript">
         $(function(){
             //确认收货
             $(".but3").click(function() {
                 //获取订单id
-                var orderid = $(this).attr("id");
-                //交易完成状态码
-                var state = 3;                 
+                var orderid = $(this).attr("id");                 
                 //发送请求
                 return $.ajax({
                    url:"/orders",  
                    type:`PUT`,   
-                   data:{"orderid":orderid,"state":state}, 
+                   data:{"orderid":orderid}, 
                    success:function(res) {
                         if (res=="成功"){
                             window.location.href = "/orders";
@@ -30,14 +28,14 @@
                 //获取订单id
                 var orderid = $(".but5").attr("id");
                 //交易完成状态码
-                var state = 1;                 
+                var totalamount = $(this).attr("id");                 
                 //发送请求
                 return $.ajax({
-                   url:"/orders",  
-                   type:`PUT`,   
-                   data:{"orderid":orderid,"state":state}, 
+                   url:"/car/order",  
+                   type:`POST`,   
+                   data:{"orderid":orderid,"totalamount":totalamount}, 
                    success:function(res) {
-                        if (res=="成功"){
+                        if (res=="支付成功"){
                             window.location.href = "/orders";
                         }
                    },
@@ -125,7 +123,11 @@
                         <td width="30"></td>
                         {{end}}
                         {{if .NotPaying}}
+<<<<<<< HEAD
                         <td width="30"> <input type="button" value="确认付款" class="but4" style="width: 79px; height: 38px;" /></td>
+=======
+                        <td width="30"> <input type="button" id="{{.TotalAmount}}"value="确认付款" class="but4" style="width: 79px; height: 38px;" /></td>
+>>>>>>> d21a108... 更新
                         <td width="30"> <input type="button"id="{{.ID}}"  value="取消订单" class="but5" style="width: 79px; height: 38px;" /></td>
                         <td width="30"></td>
                         {{end}}

@@ -1,19 +1,27 @@
 package main
 
 import (
+	"fmt"
 	"gin-bookmall/hook"
 	"gin-bookmall/processor"
+	"gin-bookmall/tool"
+	"net/http"
 
+	//"fmt"
 	"github.com/gin-gonic/gin"
+	//"github.com/smartwalle/alipay"
+	"io"
+	"os"
 )
 
 func main() {
-	r := gin.Default() //创建一个默认的路由引擎
-
-	r.Static("/static", "../static") //处理静态资源
-	r.LoadHTMLGlob("../htm/*")       //处理模板文件
-	r.GET("/page", processor.Page)   //首页
-	r.POST("/page", processor.Page)  //带价格的首页
+	r := gin.Default()                               //创建一个默认的路由引擎
+	f, _ := os.Create("gin.log")                     // 创建记录日志的文件
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout) // 将日志同时写入文件和控制台
+	r.Static("/static", "../static")                 //处理静态资源
+	r.LoadHTMLGlob("../htm/*")                       //处理模板文件
+	r.GET("/page", processor.Page)                   //首页
+	r.POST("/page", processor.Page)                  //带价格的首页
 
 	user := r.Group("/user")
 	{
@@ -25,9 +33,10 @@ func main() {
 		user.POST("/regist", processor.PostRegist) //注册表单提交
 
 		user.POST("/username", processor.PostName)           //通过Ajax请求验证用户名是否可用
-		user.POST("/acquirenumber", processor.PostAcquire)   //获取验证码
-		user.POST("/shouj", processor.PostShouj)             //获取手机号
+		user.POST("/acquirenumber", processor.PostAcquire)   //发送验证码
+		user.POST("/shouj", processor.PostShouj)             //找回密码，获取手机号
 		user.PUT("/passwordback", processor.PutPassWordBack) //更新密码
+		user.POST("/contrastnumber", processor.PostContrast) //对比验证码
 	}
 
 	car := r.Group("/car")
@@ -39,16 +48,16 @@ func main() {
 		car.PUT("", processor.PutCar)       //更新购物车中购物项的数量
 		carorder := car.Group("/order")
 		{
-			carorder.GET("", processor.GetToCheckOut) //去结账
-			carorder.POST("", processor.PostTheOrder) //确认订单页面，根据是否付款，更新订单
+			carorder.GET("", processor.GetToCheckOut) //去结账确认订单页面
+			carorder.POST("", processor.Pay)          //提交订单,确认付款
 		}
 
 	}
 
 	order := r.Group("/orders", hook.WhetherLading())
 	{
-		order.GET("", processor.GetOrder)       //我的订单，查询不同状态的订单
-		order.PUT("", processor.PutOrder)       //我的订单，更新订单状态
+		order.GET("", processor.GetOrder) //我的订单，查询不同状态的订单
+		//order.PUT("", processor.PutOrder)       //我的订单，更新订单状态
 		order.DELETE("", processor.DeleteOrder) //我的订单，取消订单
 	}
 
@@ -71,6 +80,24 @@ func main() {
 			invoicep.PUT("", processor.PutTheDelivery) //发货
 		}
 	}
+
+	r.GET("/return", func(c *gin.Context) { //支付成功之后的返回URL页面
+		fmt.Println("4444")
+		c.Request.ParseForm()
+		ok, err := tool.Client.VerifySign(c.Request.Form)
+		if err == nil && ok {
+			fmt.Println("支付成功")
+			c.Next()
+		} else {
+			c.Abort()
+			fmt.Println("err", err)
+			fmt.Println("ok err", ok)
+			c.JSON(http.StatusOK, "支付失败")
+		}
+
+	}, hook.WhetherLading(), processor.GetOrder)
+
+	r.POST("/alipay", processor.PostTheOrder) //支付成功之后的通知页面
 
 	r.Run(":8888")
 }

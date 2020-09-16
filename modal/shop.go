@@ -3,10 +3,10 @@ package modal
 import "gin-bookmall/dao"
 
 type Shop struct {
-	ID       int64   `json:"shopid" form:"shopid"`
+	ID       uint16  `json:"shopid" form:"shopid"`
 	ShopName string  `json:"shopname" form:"shopname"` //店名
-	Books    []*Book //属于店铺的图书切片
-	UserID   int64   `json:"userid" form:"userid"` //店铺所属用户id
+	Books    []*Book `gorm:"-"`                        //属于店铺的图书切片
+	UserID   uint16  `json:"userid" form:"userid"`     //店铺所属用户id
 }
 
 //获取Shop结构体
@@ -21,17 +21,17 @@ func (shop *Shop) Add() error {
 }
 
 //DeleteShop 删除店铺
-func (shop *Shop) Delete(shopid int64) error {
+func (shop *Shop) Delete(shopid uint16) error {
 	return dao.Db.Where("id=?", shopid).Delete(Shop{}).Error
 }
 
 //QueryShop 查询店铺
-func (shop *Shop) QueryU(userid int64) error {
+func (shop *Shop) QueryU(userid uint16) error {
 	return dao.Db.Where("user_id=?", userid).First(shop).Error
 }
 
 //QueryShopID 根据店铺id查询店铺
-func (shop *Shop) QueryS(shopid int64) error {
+func (shop *Shop) QueryS(shopid uint16) error {
 	return dao.Db.Where("id=?", shopid).First(shop).Error
 }
 

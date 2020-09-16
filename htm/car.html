@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>购物车</title>
-    <link rel="stylesheet" type="text/css" href="/static/login/css/login.css">
-    <script type="text/javascript" src="/static/login/js/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
     <script type="text/javascript">
         $(function(){
             //给清空购物车的链接绑定单击事件
             $(".deletes").click(function() {
-                var carid = $(this).attr("id")
                 if (confirm("请问确定要清空购物车吗？")) {
                     return $.ajax({
-                        url:"/car?carid="+carid,  
+                        url:"/car",  
                         type:`DELETE`,
                         success:function(res) {
                             if (res=="成功"){
@@ -26,17 +25,21 @@
            
             //给输入购物项的数量绑定change事件                     
             $(".updatecount").change(function() {
-                //获取购物项id
-                var cartitmid = $(this).attr("id");
+                var bookid = $(this).attr("id");
                 //输入的数量
-                var bookcount = $(this).val();                 
+                var carid = $(".deletes").attr("id");
+                var bookcount = $(this).val();  
+                var price = document.getElementById("price").innerHTML;              
                 //发送请求
                 return $.ajax({
-                   url:"/car?cartitmid="+cartitmid+"&count="+bookcount,  
-                   type:`PUT`,    
+                   url:"/car?bookid="+bookid+"&count="+bookcount+"&carid="+carid+"&price="+price,  
+                   type:`PUT`,
                    success:function(res) {
                         if (res=="成功"){
+                            //document.getElementById("amount").innerHTML =price*bookcount
                             window.location.href = "/car";
+                        }else{
+                            alert("数量多余库存")
                         }
                    },
                 });                                      
@@ -44,20 +47,17 @@
 
             //给删除购物项的链接绑定单击事件
             $(".deletecartitm").click(function(){
-                var title = $(this).attr("id");
-                //获取购物项id
-                var cartitmid = $(".updatecount").attr("id");
-                if (confirm("请问确定要删除【"+title+"】这本书吗？")) {
-                    return $.ajax({
-                        url:"/car?cartitmid="+cartitmid,  
-                        type:`DELETE`,
-                        success:function(res) {
-                            if (res=="成功"){
-                                window.location.href = "/car";
-                            }
-                        },
-                    });
-                }
+                var bookid = $(".updatecount").attr("id");             
+                return $.ajax({
+                    url:"/car?bookid="+bookid,  
+                    type:`DELETE`,
+                    //data:{"bookid":bookid},
+                    success:function(res) {
+                        if (res=="成功"){
+                            window.location.href = "/car";
+                        }
+                    },
+                });                
             }); 
 
               
@@ -78,9 +78,8 @@
     <div id="main" style="font-size: xx-large;">
         {{if .judge}}
         <caption>购物车</caption>
-        {{range $i, $v := .car.CartItms}}
+       
         <table width="600">  
-             
             <tr>
                 <td width="150">商品名称</td>
                 <td width="100">数量</td>
@@ -89,23 +88,23 @@
                 <td width="100">操作</td>
                 <hr size="2px" width="100%" color="green" align="center"/>
             </tr>
-            <span>{{$i}}</span>  
-            {{range $v}}           
+              
+            {{range .car.CartItms}}           
             <tr>
-                <td width="150">{{.Book.Title}}</td>
+                <td width="150">{{.BookName}}</td>
                 <td width="100">
-                    <input id="{{.ID}}" type="text" class="updatecount" value="{{.Count}}" style="text-align: center;width: 50px;"/>               
+                    <input id="{{.BookID}}" type="text" class="updatecount" value="{{.Count}}" style="text-align: center;width: 50px;"/>               
                 </td>
-                <td width="100">{{.Book.Price}}</td>
-                <td width="100">{{.Amount}}</td>
+                <td width="100"><span id="price">{{.Price}}</span></td>
+                <td width="100"><span id="amount">{{.Amount}}</span></td>
                 <td>
-                    <input type="button" value="删除" id="{{.Book.Title}}" class="deletecartitm" style="width: 79px; height: 38px;" />
+                    <input type="button" value="删除" class="deletecartitm" style="width: 79px; height: 38px;" />
                 </td>
                 <hr size="2px" width="100%" color="green" align="center"/>
             </tr>          
             {{end}}
         </table>
-        {{end}}
+        
 
         <div class="car_info">
             <span class="car_span">购物车共有<span class="b_count">{{.car.Totalcount}}</span>件</span>

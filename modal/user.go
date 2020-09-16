@@ -4,7 +4,7 @@ import "gin-bookmall/dao"
 
 //User 用户
 type User struct {
-	ID       int64  //自增的数
+	ID       uint16 //自增的数
 	Username string `json:"username" form:"username"`
 	Password string `json:"password" form:"password"`
 	Email    string `json:"email" form:"email"`
@@ -29,7 +29,7 @@ func (user *User) QueryU(userame string) error {
 }
 
 //QueryUser 根据用户ID向数据库中查询一条记录
-func (user *User) QuerysI(id int64) error {
+func (user *User) QuerysI(id uint16) error {
 	return dao.Db.Where("id=?", id).First(user).Error
 }
 

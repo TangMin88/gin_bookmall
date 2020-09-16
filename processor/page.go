@@ -1,6 +1,7 @@
 package processor
 
 import (
+	//"fmt"
 	"gin-bookmall/modal"
 	"net/http"
 
@@ -15,7 +16,7 @@ func Page(c *gin.Context) {
 			page.PageNo = 1
 		}
 		switch page.State {
-		case 1:
+		case "1":
 			page.QueryTotalP() //带价格查询的主页
 		default:
 			page.QueryTotal() //主页

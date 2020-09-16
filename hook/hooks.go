@@ -27,7 +27,8 @@ func WhetherLading() gin.HandlerFunc {
 			if sess.ID != "" {
 				c.SetCookie("bookmall", cookie, 1000, "/", "127.0.0.1", false, true)
 				c.Set("sess", sess) // 在请求上下文中设置值，后续的处理函数能够取到该值
-				c.Next()            //调用后面的函数
+				sess.Add()
+				c.Next() //调用后面的函数
 				return
 			}
 		}
